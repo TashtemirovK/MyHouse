@@ -45,14 +45,10 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    // Room
+    // Room db
     val roomVersion = "2.5.2"
-    //noinspection GradleDependency
     implementation("androidx.room:room-runtime:$roomVersion")
-    //noinspection GradleDependency
     annotationProcessor("androidx.room:room-compiler:$roomVersion")
-    // To use Kotlin annotation processing tool (kapt)
-    //noinspection KaptUsageInsteadOfKsp,GradleDependency
     kapt("androidx.room:room-compiler:$roomVersion")
 
     // Retrofit
@@ -75,4 +71,11 @@ dependencies {
 
     // SwipeRefreshLayout
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+
+    // define a BOM and its version
+    implementation(platform("com.squareup.okhttp3:okhttp-bom:4.12.0"))
+
+    // define any required OkHttp artifacts without version
+    implementation("com.squareup.okhttp3:okhttp")
+    implementation("com.squareup.okhttp3:logging-interceptor")
 }
