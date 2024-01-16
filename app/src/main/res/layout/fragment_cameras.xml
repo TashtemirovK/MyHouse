@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/silver"
     android:paddingHorizontal="20dp"
-    tools:context=".CamerasFragment">
+    tools:context=".utils.cameras.CamerasFragment">
 
     <TextView
         android:id="@+id/tvTitle"

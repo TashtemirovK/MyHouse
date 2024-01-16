@@ -1,12 +1,12 @@
 package com.example.myhouse.domain.usecases.cameras
 
 import com.example.myhouse.domain.CameraModel
-import com.example.myhouse.domain.repositories.CameraRepository
+import com.example.myhouse.domain.repositories.CamerasRepository
 import java.util.concurrent.Flow
 import javax.inject.Inject
 
 class RefreshCamerasUseCase @Inject constructor(
-    private val cameraRepository: CameraRepository
+    private val cameraRepository: CamerasRepository
 ) {
     suspend operator fun invoke(): Flow<Resource<List<CameraModel>>> {
 

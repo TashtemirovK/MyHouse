@@ -1,9 +1,10 @@
 package com.example.myhouse.domain.repositories
 
 import com.example.myhouse.domain.CameraModel
+import com.example.myhouse.utils.Resource
 import java.util.concurrent.Flow
 
-interface CameraRepository {
+interface CamerasRepository {
 
     suspend fun getRemoteCameras(): Flow<Resource<List<CameraModel>>>
 
