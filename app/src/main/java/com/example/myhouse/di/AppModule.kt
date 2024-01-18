@@ -1,63 +1,62 @@
 package com.example.myhouse.di
 
-import android.content.Context
-import androidx.room.Room
-import com.example.myhouse.data.api.HouseApi
-import com.example.myhouse.data.local.db.CameraDao
-import com.example.myhouse.data.local.db.DoorDao
-import com.example.myhouse.data.local.db.HouseDatabase
+import com.example.myhouse.utils.Constants.API_KEY
+import com.example.myhouse.utils.Constants.NETWORK_TIMEOUT
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit
+import javax.inject.Singleton
 
-class AppModule {
-    @Module
-    @InstallIn(SingletonComponent::class)
-    object AppModule {
-        @Provides
-        fun provideAppDatabase(@ApplicationContext context: Context): HouseDatabase =
-            Room.databaseBuilder(context, HouseDatabase::class.java, "house database")
-                .allowMainThreadQueries().build()
+@Module
+@InstallIn(SingletonComponent::class)
+object ApiModule {
 
-        @Provides
-        fun provideCameraDao(@ApplicationContext context: Context): CameraDao =
-            provideAppDatabase(context).getCameraDao()
+    @Provides
+    @Singleton
+    fun provideBaseUrl(): String {
+        return BASE_URL ?: throw IllegalStateException("BASE_URL")
+    }
 
-        @Provides
-        fun provideDoorDao(houseDatabase: HouseDatabase): DoorDao = houseDatabase.getDoorDao()
+    @Provides
+    @Singleton
+    fun provideConnectionTimeout(): Long {
+        return NETWORK_TIMEOUT ?: throw IllegalStateException("NETWORK_TIMEOUT")
+    }
 
+    @Provides
+    @Singleton
+    fun provideGson(): Gson = GsonBuilder().setLenient().create()
 
-        @Provides
-        fun provideRetrofit(): Retrofit {
+    @Singleton
+    @Provides
+    fun provideOkHttpClient(baseUrl: String): OkHttpClient {
+        val loggingInterceptor = HttpLoggingInterceptor()
+        loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
 
-            val interceptor = HttpLoggingInterceptor()
-                .setLevel(HttpLoggingInterceptor.Level.BODY)
-
-            val okHttpClient =
-                OkHttpClient().newBuilder()
-                    .connectTimeout(20, TimeUnit.SECONDS)
-                    .writeTimeout(20, TimeUnit.SECONDS)
-                    .readTimeout(20, TimeUnit.SECONDS)
-                    .addInterceptor(interceptor)
-                    .build()
-
-            return Retrofit.Builder()
-                .addConverterFactory(GsonConverterFactory.create())
-                .baseUrl("http://cars.cprogroup.ru/api/rubetek/")
-                .client(okHttpClient)
+        val requestInterceptor = Interceptor { chain ->
+            val url = chain.request()
+                .url
+                .newBuilder()
+                .addQueryParameter("api_key", API_KEY ?: "")
                 .build()
+
+            val request = chain.request()
+                .newBuilder()
+                .url(url)
+                .build()
+
+            chain.proceed(request)
         }
 
-        @Provides
-        fun provideHouseApiService(retrofit: Retrofit): HouseApi =
-            retrofit.create(HouseApi::class.java)
-
+        return OkHttpClient.Builder()
+            .addInterceptor(requestInterceptor)
+            .addInterceptor(loggingInterceptor)
+            .build()
     }
 }

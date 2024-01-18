@@ -3,4 +3,8 @@
     <string name="my_house">My House</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="migration_1_2_query">ALTER TABLE camera_table ADD COLUMN new_column TEXT</string>
+    <string name="retry" />
+    <string name="retry_string">retry</string>
+    <string name="textview">textView</string>
 </resources>

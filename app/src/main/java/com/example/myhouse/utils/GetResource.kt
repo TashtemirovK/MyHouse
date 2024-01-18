@@ -2,7 +2,8 @@ package com.example.myhouse.utils
 
 import com.example.myhouse.utils.Constants.CONNECTION_ERROR
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.internal.NopCollector.emit
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 
 abstract class GetResource {
     protected suspend fun <T> getResult(result: suspend () -> T) = flow {
